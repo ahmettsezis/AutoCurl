@@ -4,19 +4,20 @@ import requests
 import time
 
 
-url ="https://haberler.hacettepe.edu.tr/" # url değişkenine değer atanıyor 
-req = requests.get(url)  
+url ="https://www.webtekno.com/haber" # url değişkenine değer atanıyor 
+req = requests.get(url)
+req.encoding = req.apparent_encoding  
 responsedata = req.text # responsedata değişkenine req.text içeriği atanıyor 
 
 # Eğer responsedata değişkeninde <div class="haber_card_baslik"> stringini bulursan:
-if (responsedata.find('<div class="haber_card_baslik">') != -1): 
-    indexofresponsedata = responsedata.find('<div class="haber_card_baslik">') # <div class="haber_card_baslik"> stringinin başlangıç indexini indexofresponsedata değişkenine aktar
+if (responsedata.find('class="content-timeline__link clearfix" title="') != -1): 
+    indexofresponsedata = responsedata.find('class="content-timeline__link clearfix" title="') # <div class="haber_card_baslik"> stringinin başlangıç indexini indexofresponsedata değişkenine aktar
 
     x = slice(indexofresponsedata,-200) # slice objesi oluştur
     slicedresponsedata = responsedata[x] # responsedata değişkeni içeriğini slice objesi olan x ile böl ve slicedresponsedata değişkenine aktar
-    slicedresponsedataindex = slicedresponsedata.find('</div>') # bölünmüş içerikte </div> stringini ara ve indexini slicedresponsedataindex değişkenine aktar
+    slicedresponsedataindex = slicedresponsedata.find('">') # bölünmüş içerikte </div> stringini ara ve indexini slicedresponsedataindex değişkenine aktar
 
-    y = slice(31,slicedresponsedataindex) # slice objesi oluştur (31'in sebebi <div class="haber_card_baslik"> stringini silmek)
+    y = slice(47,slicedresponsedataindex) # slice objesi oluştur (31'in sebebi <div class="haber_card_baslik"> stringini silmek)
     slicedresponsedata = slicedresponsedata[y] # slicedresponsedata değişkenine div gibi html kodlarından temizlenmiş div içeriği datayı aktar
 
     unixtime = time.time() # unixtime
@@ -51,7 +52,7 @@ if (responsedata.find('<div class="haber_card_baslik">') != -1):
             'Name': slicedresponsedata, # Name kısmına slicedresponse data yani url den çekip işlediğim veriyi aktar
                 }
         )
-        requests.post('https://api.telegram.org/bot5754899324:AAFQ1q5lHQgAiVPsN9-qZpwgzuG16uVr8_k/sendMessage', json={'chat_id': -1001627563032, 'text': slicedresponsedata}) # telegram botuna söyle de yeni datayı paylaşsın
+        requests.post('https://api.telegram.org/bot5754899324:AAFQ1q5lHQgAiVPsN9-qZpwgzuG16uVr8_k/sendMessage', json={'chat_id': -1001627563032, 'text': 'BOTUN ROTASI WEBTEKNO HABERLER SAYFASINA ÇEVRİLDİ'}) # telegram botuna söyle de yeni datayı paylaşsın
     
 else:
     print("maalesef bulunamadi") # URL'de aranan kısım yok
