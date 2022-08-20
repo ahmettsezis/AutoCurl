@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Delete If Exist') {
+            steps {
+                sh 'rm -rf AutoCurl'
+            }
+        }
+        stage('Download Project') {
+            steps {
+                sh 'git clone https://github.com/ahmettsezis/AutoCurl.git'
+            }
+        }
+        stage('Delete Old Image & Container') {
+            steps {
+                sh 'docker image rm -f ahmettsezis/autocurl_slim'
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t ahmettsezis/autocurl_slim /AutoCurl/'
+            }
+        }
+        stage('Docker Login') {
+            steps {
+                withCredentials([string(credentialsId: 'Duser', variable: 'password'), string(credentialsId: 'Dpass', variable: 'user')]) {
+                 sh 'docker login --username $user --password $password'
+            }
+            }
+        }
+        stage('Docker Push') {
+            steps {
+                sh 'docker push ahmettsezis/autocurl_slim'
+            }
+        }
+        stage('Docker Logout') {
+            steps {
+                sh 'docker logout'
+            }
+        }
+    }
+
+}
