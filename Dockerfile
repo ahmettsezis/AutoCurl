@@ -1,4 +1,4 @@
-FROM python:slim
+FROM python:3.7.13-alpine
 ADD python.py /
 RUN python -m ensurepip --upgrade
 RUN python -m pip install requests
