@@ -2,42 +2,21 @@ pipeline {
     agent any
 
     stages {
-        stage('Delete If Exist') {
+        stage('Container Prune 1') {
             steps {
-                sh 'rm -rf AutoCurl'
+                sh "docker container prune -f"
             }
         }
-        stage('Download Project') {
+        stage('Run Python Container') {
             steps {
-                sh 'git clone https://github.com/ahmettsezis/AutoCurl.git'
-            }
-        }
-        stage('Delete Old Image & Container') {
-            steps {
-                sh 'docker container prune -f'
-                sh 'docker image prune -f'
-            }
-        }
-        stage('Docker Build') {
-            steps {
-                sh 'docker build -t ahmettsezis/autocurl_slim /AutoCurl/'
-            }
-        }
-        stage('Docker Login') {
-            steps {
-                withCredentials([string(credentialsId: 'dUser', variable: 'user'), string(credentialsId: 'dPass', variable: 'password')]) {
-                 sh 'docker login --username $user --password $password'
+                 withCredentials([string(credentialsId: 'accessK', variable: 'access'), string(credentialsId: 'secretK', variable: 'secret')]) {
+                     sh "docker run --env AWS_ACCESS_KEY_ID=$access --env AWS_SECRET_ACCESS_KEY=$secret --name container_autocurl ahmettsezis/autocurl_slim"
             }
             }
         }
-        stage('Docker Push') {
+        stage('Container Prune 2') {
             steps {
-                sh 'docker push ahmettsezis/autocurl_slim'
-            }
-        }
-        stage('Docker Logout') {
-            steps {
-                sh 'docker logout'
+                sh "docker container prune -f"
             }
         }
     }
