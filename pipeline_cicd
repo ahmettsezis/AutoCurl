@@ -14,7 +14,8 @@ pipeline {
         }
         stage('Delete Old Image & Container') {
             steps {
-                sh 'docker image rm -f ahmettsezis/autocurl_slim'
+                sh 'docker container prune -f'
+                sh 'docker image prune -f'
             }
         }
         stage('Docker Build') {
