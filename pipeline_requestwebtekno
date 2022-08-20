@@ -1,0 +1,11 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Operasyon') {
+            steps {
+                sh "docker run --env AWS_ACCESS_KEY_ID=AKIAQ4LYXLKWMHDUQK5Y --env AWS_SECRET_ACCESS_KEY=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 ahmettsezis/autocurl_slim"
+            }
+        }
+    }
+}
