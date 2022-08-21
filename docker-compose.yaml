@@ -4,6 +4,7 @@ services :
 
   Jenkins:
     image: jenkins/jenkins:lts-jdk11
+    user: root
     privileged: true
     restart: always
     networks: 
