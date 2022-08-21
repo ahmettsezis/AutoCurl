@@ -1,0 +1,26 @@
+version: '3.9'
+
+services :
+
+  Jenkins:
+    image: jenkins/jenkins:lts-jdk11
+    restart: always
+    networks: 
+    - baglantim
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    ports:
+      - 8080:8080
+      - 50000:50000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 768M
+        reservations:
+          cpus: '0.2'
+          memory: 128M
+    
+networks:
+  baglantim: 
+     driver: bridge
