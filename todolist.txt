@@ -11,4 +11,4 @@ sudo service docker restart
 
 
 ### inbound jenkins agent for node
-sudo docker run --init jenkins/inbound-agent -url http://x.x.x.x:8080 secretkey myslave1
+sudo docker run --init jenkins/inbound-agent -url http://10.0.10.111:8080 ca8f800d9bba434b0e51c7a23384100d9891faf1df5e2489e87c4b5b31f08442 myslave1

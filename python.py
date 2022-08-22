@@ -1,13 +1,19 @@
 import boto3
 import requests
 import time
+import os
+telegramlink = os.environ['telegramlink']
+telegramchatid = os.environ['telegramchatid']
+requesturl = os.environ['requesturl']
+requestpart = os.environ['requestpart']
 
-url ="https://www.webtekno.com/haber" # url değişkenine değer atanıyor 
+url = requesturl # url değişkenine değer atanıyor 
 req = requests.get(url)
 req.encoding = req.apparent_encoding  
 responsedata = req.text # responsedata değişkenine req.text içeriği atanıyor
 
-stringtofind= '"content-timeline__link clearfix" title="' # içeriğin alınacağı yeri belirten html kodu değişkene aktarılıyor
+""" stringtofind= requestpart # içeriğin alınacağı yeri belirten html kodu değişkene aktarılıyor """
+stringtofind = requestpart
 # Eğer responsedata değişkeninde <div class="haber_card_baslik"> stringini bulursan:
 if (responsedata.find('') != -1): 
     indexofresponsedata = responsedata.find(stringtofind) # <div class="haber_card_baslik"> stringinin başlangıç indexini indexofresponsedata değişkenine aktar
@@ -54,6 +60,6 @@ if (responsedata.find('') != -1):
             'Name': slicedresponsedata, # Name kısmına slicedresponse data yani url den çekip işlediğim veriyi aktar
                 }
         )
-        requests.post('https://api.telegram.org/bot5754899324:AAFQ1q5lHQgAiVPsN9-qZpwgzuG16uVr8_k/sendMessage', json={'chat_id': -1001627563032, 'text': slicedresponsedata}) # telegram botuna söyle de yeni datayı paylaşsın
+        requests.post(telegramlink, json={'chat_id': telegramchatid, 'text': slicedresponsedata}) # telegram botuna söyle de yeni datayı paylaşsın
 else:
     print("maalesef bulunamadi") # URL'de aranan kısım yok
