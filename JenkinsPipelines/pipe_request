@@ -1,0 +1,17 @@
+pipeline {
+    agent { 
+        node {
+        label 'slave'
+    }
+    }
+
+    stages {
+        stage('Run Python Container') {
+            steps {
+                 withCredentials([string(credentialsId: 'accessK', variable: 'access'), string(credentialsId: 'secretK', variable: 'secret'), string(credentialsId: 'curlcontainer', variable: 'curlcontainer')]) {
+                     sh "sudo docker run --env AWS_ACCESS_KEY_ID=$access --env AWS_SECRET_ACCESS_KEY=$secret --rm --name container_autocurl $curlcontainer"
+            }
+            }
+        }
+    }
+}
