@@ -1,24 +1,22 @@
 import boto3
-from urllib import response
 import requests
 import time
-
 
 url ="https://www.webtekno.com/haber" # url değişkenine değer atanıyor 
 req = requests.get(url)
 req.encoding = req.apparent_encoding  
 responsedata = req.text # responsedata değişkenine req.text içeriği atanıyor
 
-
+stringtofind= '"content-timeline__link clearfix" title="' # içeriğin alınacağı yeri belirten html kodu değişkene aktarılıyor
 # Eğer responsedata değişkeninde <div class="haber_card_baslik"> stringini bulursan:
-if (responsedata.find('class="content-timeline__link clearfix" title="') != -1): 
-    indexofresponsedata = responsedata.find('class="content-timeline__link clearfix" title="') # <div class="haber_card_baslik"> stringinin başlangıç indexini indexofresponsedata değişkenine aktar
+if (responsedata.find('') != -1): 
+    indexofresponsedata = responsedata.find(stringtofind) # <div class="haber_card_baslik"> stringinin başlangıç indexini indexofresponsedata değişkenine aktar
 
-    x = slice(indexofresponsedata,-200) # slice objesi oluştur
+    x = slice(indexofresponsedata,-50) # slice objesi oluştur
     slicedresponsedata = responsedata[x] # responsedata değişkeni içeriğini slice objesi olan x ile böl ve slicedresponsedata değişkenine aktar
     slicedresponsedataindex = slicedresponsedata.find('">') # bölünmüş içerikte </div> stringini ara ve indexini slicedresponsedataindex değişkenine aktar
 
-    y = slice(47,slicedresponsedataindex) # slice objesi oluştur (31'in sebebi <div class="haber_card_baslik"> stringini silmek)
+    y = slice(len(stringtofind),slicedresponsedataindex) # html kodunun başlangıç ve bitiş noktalarına kadar sil)
     slicedresponsedata = slicedresponsedata[y] # slicedresponsedata değişkenine div gibi html kodlarından temizlenmiş div içeriği datayı aktar
 
     unixtime = time.time() # unixtime
@@ -46,7 +44,7 @@ if (responsedata.find('class="content-timeline__link clearfix" title="') != -1):
         if item['partitionKey'] == str(lastBIGGESTpartitionkey): # item'ın partitionkey değeri lastBIGGESTpartitionkey'in stringe çevirilmiş haliyle aynı ise:
             selectedTitle = item['Name'] # selectedTitle değişkenine item'ın Name değerinim aktar
     
-    slicedresponsedata = slicedresponsedata.replace("&#039;", "'")
+    slicedresponsedata = slicedresponsedata.replace("&#039;", "'") 
     slicedresponsedata = slicedresponsedata.replace("&quot;", '"')
 
     if selectedTitle != slicedresponsedata: # selectedTitle'ın değeri slicedresponsedata ile aynı değilse: (yani urlden son çektiğim verinin işlenmiş hali, en son çektiğim ve işlenip db'ye yazılmış verim ile aynı değilse)
@@ -57,6 +55,5 @@ if (responsedata.find('class="content-timeline__link clearfix" title="') != -1):
                 }
         )
         requests.post('https://api.telegram.org/bot5754899324:AAFQ1q5lHQgAiVPsN9-qZpwgzuG16uVr8_k/sendMessage', json={'chat_id': -1001627563032, 'text': slicedresponsedata}) # telegram botuna söyle de yeni datayı paylaşsın
-        
 else:
     print("maalesef bulunamadi") # URL'de aranan kısım yok

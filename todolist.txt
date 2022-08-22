@@ -1,0 +1,14 @@
+apt-get update
+apt upgrade
+apt install docker.io -y
+apt install docker-compose
+
+### DOCKER CONNECTION REFUSED HATASI İÇİN
+Log in to the server and open the docker service file /lib/systemd/system/docker.service. Search for ExecStart and replace that line with the following.
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:4243 -H unix:///var/run/docker.sock
+sudo systemctl daemon-reload
+sudo service docker restart
+
+
+### inbound jenkins agent for node
+sudo docker run --init jenkins/inbound-agent -url http://10.0.10.111:8080 ca8f800d9bba434b0e51c7a23384100d9891faf1df5e2489e87c4b5b31f08442 myslave1
