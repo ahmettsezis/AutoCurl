@@ -1,14 +1,14 @@
 pipeline {
     agent { 
         node {
-        label 'slave'
+        label 'slavelabel'
     }
     }
 
     stages {
         stage('Run Python Container') {
             steps {
-                 withCredentials([string(credentialsId: 'accessK', variable: 'access'), string(credentialsId: 'secretK', variable: 'secret'), string(credentialsId: 'curlcontainer', variable: 'curlcontainer'),string(credentialsId: 'requesturl', variable: 'rurl'), string(credentialsId: 'requestpart', variable: 'rpart'), string(credentialsId: 'telegramlink', variable: 'tlink'), string(credentialsId: 'telegramchatid', variable: 'tchat')]) {
+                 withCredentials([string(credentialsId: 'accessK', variable: 'access'), string(credentialsId: 'secretK', variable: 'secret'), string(credentialsId: 'curlcontainer', variable: 'curlcontainer'),string(credentialsId: 'requesturl', variable: 'rurl'), string(credentialsId: 'telegramlink', variable: 'tlink'), string(credentialsId: 'telegramchat', variable: 'tchat')]) {
                      sh 'sudo docker run --env AWS_ACCESS_KEY_ID=${access} --env AWS_SECRET_ACCESS_KEY=${secret} --env requesturl=${rurl} --env telegramchatid=${tchat} --env telegramlink=${tlink} --env requestpart=\'"content-timeline__link clearfix" title="\' --rm --name container_autocurl ${curlcontainer}'
             }
             }

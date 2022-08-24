@@ -1,0 +1,44 @@
+pipeline {
+    agent { 
+        node {
+        label 'slavelabel'
+    }
+    }
+
+    stages {
+        stage('Total Prune') {
+            steps {
+                     sh "sudo docker container prune -f"
+                     sh "sudo docker image prune -f"
+                     sh "rm -rf AutoCurl"
+            }
+        }
+        stage('Git Clone') {
+            steps {
+                    sh "git clone https://github.com/ahmettsezis/AutoCurl.git"
+            }
+        }
+        stage('Docker Build') {
+            steps {
+                    sh "sudo docker build -t ahmettsezis/autocurl_slim AutoCurl "
+            }
+        }
+        stage('Docker Login') {
+            steps {
+                withCredentials([string(credentialsId: 'duser', variable: 'user'), string(credentialsId: 'dpass', variable: 'pass')]) {
+                    sh "sudo docker login --username $user --password $pass"
+            }
+            }
+        }
+        stage('Docker Push') {
+            steps {
+                    sh "sudo docker image push ahmettsezis/autocurl_slim"
+            }
+        }
+        stage('Docker Logout') {
+            steps {
+                    sh "sudo docker logout"
+            }
+        }
+    }
+}

@@ -12,17 +12,15 @@ req = requests.get(url)
 req.encoding = req.apparent_encoding  
 responsedata = req.text # responsedata değişkenine req.text içeriği atanıyor
 
-""" stringtofind= requestpart # içeriğin alınacağı yeri belirten html kodu değişkene aktarılıyor """
-stringtofind = requestpart
 # Eğer responsedata değişkeninde <div class="haber_card_baslik"> stringini bulursan:
 if (responsedata.find('') != -1): 
-    indexofresponsedata = responsedata.find(stringtofind) # <div class="haber_card_baslik"> stringinin başlangıç indexini indexofresponsedata değişkenine aktar
+    indexofresponsedata = responsedata.find(requestpart) # <div class="haber_card_baslik"> stringinin başlangıç indexini indexofresponsedata değişkenine aktar
 
     x = slice(indexofresponsedata,-50) # slice objesi oluştur
     slicedresponsedata = responsedata[x] # responsedata değişkeni içeriğini slice objesi olan x ile böl ve slicedresponsedata değişkenine aktar
     slicedresponsedataindex = slicedresponsedata.find('">') # bölünmüş içerikte </div> stringini ara ve indexini slicedresponsedataindex değişkenine aktar
 
-    y = slice(len(stringtofind),slicedresponsedataindex) # html kodunun başlangıç ve bitiş noktalarına kadar sil)
+    y = slice(len(requestpart),slicedresponsedataindex) # html kodunun başlangıç ve bitiş noktalarına kadar sil)
     slicedresponsedata = slicedresponsedata[y] # slicedresponsedata değişkenine div gibi html kodlarından temizlenmiş div içeriği datayı aktar
 
     unixtime = time.time() # unixtime
