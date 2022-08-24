@@ -6,6 +6,7 @@ telegramlink = os.environ['telegramlink']
 telegramchatid = os.environ['telegramchatid']
 requesturl = os.environ['requesturl']
 requestpart = os.environ['requestpart']
+requestpartlink = os.environ['requestpartlink']
 
 url = requesturl # url değişkenine değer atanıyor 
 req = requests.get(url)
@@ -13,13 +14,19 @@ req.encoding = req.apparent_encoding
 responsedata = req.text # responsedata değişkenine req.text içeriği atanıyor
 
 # Eğer responsedata değişkeninde <div class="haber_card_baslik"> stringini bulursan:
-if (responsedata.find('') != -1): 
-    indexofresponsedata = responsedata.find(requestpart) # <div class="haber_card_baslik"> stringinin başlangıç indexini indexofresponsedata değişkenine aktar
+if (responsedata.find('') != -1):
 
+    indexofresponsedata = responsedata.find(requestpartlink)
+    x = slice(indexofresponsedata,-50) # slice objesi oluştur
+    slicedresponsedatalink = responsedata[x] # responsedata değişkeni içeriğini slice objesi olan x ile böl ve slicedresponsedata değişkenine aktar
+    slicedresponsedataindex = slicedresponsedatalink.find('onclick') # bölünmüş içerikte </div> stringini ara ve indexini slicedresponsedataindex değişkenine aktar
+    y = slice(len(requestpartlink)+10,slicedresponsedataindex-2) # html kodunun başlangıç ve bitiş noktalarına kadar sil)
+    slicedresponsedatalink = slicedresponsedatalink[y] # slicedresponsedata değişkenine div gibi html kodlarından temizlenmiş div içeriği datayı aktar
+
+    indexofresponsedata = responsedata.find(requestpart) # <div class="haber_card_baslik"> stringinin başlangıç indexini indexofresponsedata değişkenine aktar
     x = slice(indexofresponsedata,-50) # slice objesi oluştur
     slicedresponsedata = responsedata[x] # responsedata değişkeni içeriğini slice objesi olan x ile böl ve slicedresponsedata değişkenine aktar
     slicedresponsedataindex = slicedresponsedata.find('">') # bölünmüş içerikte </div> stringini ara ve indexini slicedresponsedataindex değişkenine aktar
-
     y = slice(len(requestpart),slicedresponsedataindex) # html kodunun başlangıç ve bitiş noktalarına kadar sil)
     slicedresponsedata = slicedresponsedata[y] # slicedresponsedata değişkenine div gibi html kodlarından temizlenmiş div içeriği datayı aktar
 
@@ -58,6 +65,6 @@ if (responsedata.find('') != -1):
             'Name': slicedresponsedata, # Name kısmına slicedresponse data yani url den çekip işlediğim veriyi aktar
                 }
         )
-        requests.post(telegramlink, json={'chat_id': telegramchatid, 'text': slicedresponsedata}) # telegram botuna söyle de yeni datayı paylaşsın
+        requests.post(telegramlink, json={'chat_id': telegramchatid, 'text': slicedresponsedata + "\n" + "\n" + slicedresponsedatalink}) # telegram botuna söyle de yeni datayı paylaşsın
 else:
     print("maalesef bulunamadi") # URL'de aranan kısım yok
